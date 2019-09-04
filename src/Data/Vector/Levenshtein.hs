@@ -17,11 +17,11 @@ poke v ix a = V.modify (\vec -> write vec ix a) v
 mutate :: Matrix a -> (Int, Int) -> a -> Matrix a
 mutate m (y, x) a = poke m y (poke (m ! y) x a)
 
--- | /O(n^2)/ Generate an empty MxN matrix.
+-- | /O(mn)/ Generate an empty MxN matrix.
 empty2D :: Int -> Int -> Matrix Int
 empty2D m n = V.replicate m (V.replicate n 0)
 
--- | /O(n^2)/ Construct the initial Levenshtein matrix.
+-- | /O(mn)/ Construct the initial Levenshtein matrix.t
 initial :: Int -> Int -> Matrix Int
 initial m n = V.fromList [V.fromList [rules m' n' | m' <- [0..m]] | n' <- [0..n]]
   where rules m n
@@ -33,7 +33,7 @@ initial m n = V.fromList [V.fromList [rules m' n' | m' <- [0..m]] | n' <- [0..n]
 at :: Matrix a -> (Int, Int) -> a
 at mat (y, x) = (mat ! y) ! x
 
--- | Wagner-Fischer Levenshtein distance function.
+-- | /O(mn)/ Wagner-Fischer Levenshtein distance function.
 distance' :: Eq a => [a] -> [a] -> Matrix Int
 distance' s t = go (initial m n) 1
   where
@@ -49,7 +49,7 @@ distance' s t = go (initial m n) 1
 distance :: Eq a => [a] -> [a] -> Int
 distance s t = V.last $ V.last $ distance' s t
 
--- | Mutate a Matrix according to Levenshtein rules.
+-- | /O(n)/ Mutate a Matrix according to Levenshtein rules.
 change :: Matrix Int -> Int -> Int -> Int -> Matrix Int 
 change mat i j c = mutate mat (i, j) lowest
   where lowest = minimum [mat `at` (i - 1, j) + 1, mat `at` (i, j - 1) + 1, mat `at` (i - 1, j - 1) + c]
