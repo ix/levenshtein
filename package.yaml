@@ -1,0 +1,24 @@
+name:                levenshtein
+version:             0.1.0.0
+github:              "ix/levenshtein"
+license:             BSD3
+author:              "Rose &quot;ix&quot;"
+maintainer:          "rose@empty.town"
+copyright:           "Rose 2019"
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/ix/levenshtein#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- vector >= 0.12.0 && < 0.13
+
+
+library:
+  source-dirs: src
