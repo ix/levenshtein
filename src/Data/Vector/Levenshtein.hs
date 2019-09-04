@@ -23,11 +23,12 @@ empty2D m n = V.replicate m (V.replicate n 0)
 
 -- | /O(mn)/ Construct the initial Levenshtein matrix.t
 initial :: Int -> Int -> Matrix Int
-initial m n = V.fromList [V.fromList [rules m' n' | m' <- [0..m]] | n' <- [0..n]]
-  where rules m n
-          | m == 0    = n
-          | n == 0    = m
-          | otherwise = 0
+initial m n = V.fromList
+  [ V.fromList [ rules m' n' | m' <- [0 .. m] ] | n' <- [0 .. n] ]
+ where
+  rules m n | m == 0    = n
+            | n == 0    = m
+            | otherwise = 0
 
 -- | /O(1)/ Index a matrix.
 at :: Matrix a -> (Int, Int) -> a
@@ -36,23 +37,29 @@ at mat (y, x) = (mat ! y) ! x
 -- | /O(mn)/ Wagner-Fischer Levenshtein distance function.
 distance' :: Eq a => [a] -> [a] -> Matrix Int
 distance' s t = go (initial m n) 1
-  where
-    go mat i
-      | i == (n + 1)    = mat
-      | otherwise = go (go' mat i 1) $ succ i
-    go' mat i j
-      | j == (m + 1)    = mat
-      | otherwise = go' (change mat i j $ cost (s !! (i - 1)) (t !! (j - 1))) i (succ j)
-    n = length s
-    m = length t
+ where
+  go mat i | i == (n + 1) = mat
+           | otherwise    = go (go' mat i 1) $ succ i
+  go' mat i j
+    | j == (m + 1) = mat
+    | otherwise = go' (change mat i j $ cost (s !! (i - 1)) (t !! (j - 1)))
+                      i
+                      (succ j)
+  n = length s
+  m = length t
 
 distance :: Eq a => [a] -> [a] -> Int
 distance s t = V.last $ V.last $ distance' s t
 
 -- | /O(n)/ Mutate a Matrix according to Levenshtein rules.
-change :: Matrix Int -> Int -> Int -> Int -> Matrix Int 
+change :: Matrix Int -> Int -> Int -> Int -> Matrix Int
 change mat i j c = mutate mat (i, j) lowest
-  where lowest = minimum [mat `at` (i - 1, j) + 1, mat `at` (i, j - 1) + 1, mat `at` (i - 1, j - 1) + c]
+ where
+  lowest = minimum
+    [ mat `at` (i - 1, j) + 1
+    , mat `at` (i, j - 1) + 1
+    , mat `at` (i - 1, j - 1) + c
+    ]
 
 -- | /O(1)/ Calculate substitution cost.
 cost :: Eq a => a -> a -> Int

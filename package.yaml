@@ -19,6 +19,13 @@ dependencies:
 - base >= 4.7 && < 5
 - vector >= 0.12.0 && < 0.13
 
-
 library:
   source-dirs: src
+
+tests:
+  hunit:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+      - levenshtein
+      - hspec >= 2.7.1 && < 2.8
